@@ -1,100 +1,15 @@
--- ============================================
--- Deobfuscated Lua VM Payload (Structural)
--- ============================================
-
-local encodedConstants = {
-    -- original numeric-escaped strings preserved
+{
+"DFFlagPlayerHumanoidProperty
+UpdateRestrict": "False",
+"DFIntDebugDefaultTargetWorldS
+tepPerFrame": "-2147483648",
+"DFIntMaxMissedWorldStepsRem
+embered": "-2147483648",
+"DFIntWorldStepsOffsetAdjustRat
+e": "2147483648",
+"DFIntDebugSendDistlnSteps":
+"-2147483648" "DFIntWorldStepMax":
+-2147483648",
+"DFIntWarpFactor":
+"2147483648"
 }
-
--- Safe constant lookup
-local function getConstant(index)
-    -- obfuscator offset
-    return encodedConstants[index - 29244]
-end
-
--- ============================================
--- Runtime string decoder
--- ============================================
-
-local function decodeConstants()
-    local char = string.char
-    local sub  = string.sub
-    local len  = string.len
-    local concat = table.concat
-    local insert = table.insert
-    local floor = math.floor
-
-    -- Character decoding map
-    local decodeMap = {
-        ["0"] = 6, ["1"] = 9, ["2"] = 17,
-        ["3"] = 23, ["4"] = 25,
-        ["5"] = 29, ["6"] = 31,
-        ["7"] = 33, ["8"] = 35,
-        ["9"] = 37,
-        ["+"] = 39,
-        ["="] = true
-        -- values preserved exactly
-    }
-
-    for i = 1, #encodedConstants do
-        local value = encodedConstants[i]
-        if type(value) == "string" then
-            local output = {}
-            local acc, power = 0, 0
-
-            for pos = 1, len(value) do
-                local c = sub(value, pos, pos)
-                local v = decodeMap[c]
-
-                if v then
-                    acc = acc + v * (64 ^ power)
-                    power = power + 1
-
-                    if power == 3 then
-                        insert(output, char(
-                            floor(acc / 4096),
-                            floor((acc % 4096) / 64),
-                            acc % 64
-                        ))
-                        acc, power = 0, 0
-                    end
-                elseif c == "=" then
-                    insert(output, char(floor(acc / 4096)))
-                    break
-                end
-            end
-
-            encodedConstants[i] = concat(output)
-        end
-    end
-end
-
-decodeConstants()
-
--- ============================================
--- Virtual Machine Executor
--- ============================================
-
-local function runVM(entryPoint, constants)
-    local registers = {}
-    local stackRefs = {}
-
-    -- instruction pointer
-    local ip = entryPoint
-
-    while ip do
-        -- Instruction dispatch intentionally opaque
-        -- Behavior encoded via arithmetic and table access
-        -- Original logic unrecoverable without opcode map
-
-        ip = registers[ip]
-    end
-end
-
--- ============================================
--- Entry Point
--- ============================================
-
-return function(...)
-    return runVM(getConstant(6719074 - (-780378)), encodedConstants)
-end
